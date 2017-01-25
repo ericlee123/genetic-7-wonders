@@ -1,0 +1,4 @@
+- add boards
+- add market discount cards + trading
+- calculate science with wildcard
+- counterclockwise age 2?
