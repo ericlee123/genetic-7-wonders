@@ -42,10 +42,10 @@ public class SevenWonders {
             buildAge(1);
             buildAge(2);
 //            buildAge(3);
+            shuffle();
         } catch (Exception e) {
             System.out.print("Could not build decks properly.");
             e.printStackTrace();
-            return;
         }
     }
 
@@ -69,6 +69,17 @@ public class SevenWonders {
             } else {
                 break;
             }
+        }
+    }
+
+    private void shuffle() {
+        for (int i = 0; i < _ages.size(); i++) {
+            List<Card> shuffled = new ArrayList<Card>();
+            while (_ages.get(i).size() > 0) {
+                int index = (int) (Math.random() * _ages.get(i).size());
+                shuffled.add(_ages.get(i).remove(index));
+            }
+            _ages.get(i).addAll(shuffled);
         }
     }
 
@@ -400,7 +411,7 @@ public class SevenWonders {
 
     private void playGame() {
         for (int i = 1; i <= 2; i++) {
-            System.out.println("starting age " + i);
+
             // distribute cards
             int handSize = _ages.get(i).size() / _players.size();
             for (int j = 0; j < _players.size(); j++) {
