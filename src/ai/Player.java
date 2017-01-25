@@ -61,6 +61,22 @@ public class Player {
         return _hand;
     }
 
+    public void twoGrayLMR() {
+        _money += 2 * _leftNeighbor.getColorFreq().get(Card.Color.GRAY);
+        _money += 2 * _colorFreq.get(Card.Color.GRAY);
+        _money += 2 * _rightNeighbor.getColorFreq().get(Card.Color.GRAY);
+    }
+
+    public void oneBrownLMR() {
+        _money += _leftNeighbor.getColorFreq().get(Card.Color.BROWN);
+        _money += _colorFreq.get(Card.Color.BROWN);
+        _money += _rightNeighbor.getColorFreq().get(Card.Color.BROWN);
+    }
+
+    public Map<Card.Color, Integer> getColorFreq() {
+        return _colorFreq;
+    }
+
     public void addMoney(int change) {
         _money += change;
     }

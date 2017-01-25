@@ -40,7 +40,7 @@ public class SevenWonders {
     private void generateDecks() {
         try {
             buildAge(1);
-//            buildAge(2);
+            buildAge(2);
 //            buildAge(3);
         } catch (Exception e) {
             System.out.print("Could not build decks properly.");
@@ -75,102 +75,109 @@ public class SevenWonders {
     private Card makeCard(String cardName) {
         Card c = new Card();
         c.setName(cardName);
-        Resource r = new Resource();
-        List<Resource> cost = new ArrayList<Resource>();
+        Resource r0 = new Resource();
+        Resource r1 = new Resource();
+        Resource r2 = new Resource();
+        Resource r3 = new Resource();
+        Resource r4 = new Resource();
+        Resource r5 = new Resource();
+        Resource r6 = new Resource();
         Set<Resource> resources = new HashSet<Resource>();
+        List<Resource> cost = new ArrayList<Resource>();
+        List<String> fr = new ArrayList<String>();
         Card.Effect ce = null;
 
         if (cardName.equals("loom")) { // gray
             c.setColor(Card.Color.GRAY);
-            r.addType(Resource.Type.LOOM);
-            resources.add(r);
+            r0.addType(Resource.Type.LOOM);
+            resources.add(r0);
             ce = (Player p) -> p.addResources(resources);
         } else if (cardName.equals("glassworks")) {
             c.setColor(Card.Color.GRAY);
-            r.addType(Resource.Type.GLASS);
-            resources.add(r);
+            r0.addType(Resource.Type.GLASS);
+            resources.add(r0);
             ce = (Player p) -> p.addResources(resources);
         } else if (cardName.equals("press")) {
             c.setColor(Card.Color.GRAY);
-            r.addType(Resource.Type.PAPYRUS);
-            resources.add(r);
+            r0.addType(Resource.Type.PAPYRUS);
+            resources.add(r0);
             ce = (Player p) -> p.addResources(resources);
         } else if (cardName.equals("clay-pit")) { // brown
             c.setColor(Card.Color.BROWN);
             c.setMoneyCost(1);
-            r.addType(Resource.Type.CLAY);
-            r.addType(Resource.Type.ORE);
-            resources.add(r);
+            r0.addType(Resource.Type.CLAY);
+            r0.addType(Resource.Type.ORE);
+            resources.add(r0);
             ce = (Player p) -> p.addResources(resources);
         } else if (cardName.equals("timber-yard")) {
             c.setColor(Card.Color.BROWN);
             c.setMoneyCost(1);
-            r.addType(Resource.Type.STONE);
-            r.addType(Resource.Type.WOOD);
-            resources.add(r);
+            r0.addType(Resource.Type.STONE);
+            r0.addType(Resource.Type.WOOD);
+            resources.add(r0);
             ce = (Player p) -> p.addResources(resources);
         } else if (cardName.equals("excavation")) {
             c.setColor(Card.Color.BROWN);
             c.setMoneyCost(1);
-            r.addType(Resource.Type.STONE);
-            r.addType(Resource.Type.CLAY);
-            resources.add(r);
+            r0.addType(Resource.Type.STONE);
+            r0.addType(Resource.Type.CLAY);
+            resources.add(r0);
             ce = (Player p) -> p.addResources(resources);
         } else if (cardName.equals("clay-pool")) {
             c.setColor(Card.Color.BROWN);
-            r.addType(Resource.Type.CLAY);
-            resources.add(r);
+            r0.addType(Resource.Type.CLAY);
+            resources.add(r0);
             ce = (Player p) -> p.addResources(resources);
         } else if (cardName.equals("forest-cave")) {
             c.setColor(Card.Color.BROWN);
             c.setMoneyCost(1);
-            r.addType(Resource.Type.WOOD);
-            r.addType(Resource.Type.ORE);
-            resources.add(r);
+            r0.addType(Resource.Type.WOOD);
+            r0.addType(Resource.Type.ORE);
+            resources.add(r0);
             ce = (Player p) -> p.addResources(resources);
         } else if (cardName.equals("stone-pit")) {
             c.setColor(Card.Color.BROWN);
-            r.addType(Resource.Type.STONE);
-            resources.add(r);
+            r0.addType(Resource.Type.STONE);
+            resources.add(r0);
             ce = (Player p) -> p.addResources(resources);
         } else if (cardName.equals("lumber-yard")) {
             c.setColor(Card.Color.BROWN);
-            r.addType(Resource.Type.WOOD);
-            resources.add(r);
+            r0.addType(Resource.Type.WOOD);
+            resources.add(r0);
             ce = (Player p) -> p.addResources(resources);
         } else if (cardName.equals("mine")) {
             c.setColor(Card.Color.BROWN);
             c.setMoneyCost(1);
-            r.addType(Resource.Type.STONE);
-            r.addType(Resource.Type.ORE);
-            resources.add(r);
+            r0.addType(Resource.Type.STONE);
+            r0.addType(Resource.Type.ORE);
+            resources.add(r0);
             ce = (Player p) -> p.addResources(resources);
         } else if (cardName.equals("tree-farm")) {
             c.setColor(Card.Color.BROWN);
             c.setMoneyCost(1);
-            r.addType(Resource.Type.WOOD);
-            r.addType(Resource.Type.CLAY);
-            resources.add(r);
+            r0.addType(Resource.Type.WOOD);
+            r0.addType(Resource.Type.CLAY);
+            resources.add(r0);
             ce = (Player p) -> p.addResources(resources);
         } else if (cardName.equals("ore-vein")) {
             c.setColor(Card.Color.BROWN);
-            r.addType(Resource.Type.ORE);
-            resources.add(r);
+            r0.addType(Resource.Type.ORE);
+            resources.add(r0);
             ce = (Player p) -> p.addResources(resources);
         } else if (cardName.equals("stockade")) { // red
             c.setColor(Card.Color.RED);
-            r.addType(Resource.Type.WOOD);
-            cost.add(r);
+            r0.addType(Resource.Type.WOOD);
+            cost.add(r0);
             ce = (Player p) -> p.addMilitary(1);
         } else if (cardName.equals("guard-tower")) {
             c.setColor(Card.Color.RED);
-            r.addType(Resource.Type.CLAY);
-            cost.add(r);
+            r0.addType(Resource.Type.CLAY);
+            cost.add(r0);
             ce = (Player p) -> p.addMilitary(1);
         } else if (cardName.equals("barracks")) {
             c.setColor(Card.Color.RED);
-            r.addType(Resource.Type.ORE);
-            cost.add(r);
+            r0.addType(Resource.Type.ORE);
+            cost.add(r0);
             ce = (Player p) -> p.addMilitary(1);
         } else if (cardName.equals("pawnshop")) { // blue
             c.setColor(Card.Color.BLUE);
@@ -183,27 +190,205 @@ public class SevenWonders {
             ce = (Player p) -> p.addVP(2);
         } else if (cardName.equals("baths")) {
             c.setColor(Card.Color.BLUE);
-            r.addType(Resource.Type.STONE);
-            cost.add(r);
+            r0.addType(Resource.Type.STONE);
+            cost.add(r0);
             ce = (Player p) -> p.addVP(3);
         } else if (cardName.equals("workshop")) { // green
             c.setColor(Card.Color.GREEN);
-            r.addType(Resource.Type.GLASS);
-            cost.add(r);
+            r0.addType(Resource.Type.GLASS);
+            cost.add(r0);
             ce = (Player p) -> p.addScience(0);
         } else if (cardName.equals("apothecary")) {
             c.setColor(Card.Color.GREEN);
-            r.addType(Resource.Type.LOOM);
-            cost.add(r);
+            r0.addType(Resource.Type.LOOM);
+            cost.add(r0);
             ce = (Player p) -> p.addScience(1);
         } else if (cardName.equals("scriptorium")) {
             c.setColor(Card.Color.GREEN);
-            r.addType(Resource.Type.GLASS);
-            cost.add(r);
+            r0.addType(Resource.Type.GLASS);
+            cost.add(r0);
             ce = (Player p) -> p.addScience(2);
         } else if (cardName.equals("tavern")) { // yellow
             c.setColor(Card.Color.YELLOW);
             ce = (Player p) -> p.addMoney(5);
+        } else if (cardName.equals("brickyard")) { // =============AGE 2================ brown
+            c.setColor(Card.Color.BROWN);
+            c.setMoneyCost(1);
+            r0.addType(Resource.Type.CLAY);
+            r1.addType(Resource.Type.CLAY);
+            resources.add(r0);
+            resources.add(r1);
+            ce = (Player p) -> p.addResources(resources);
+        } else if (cardName.equals("sawmill")) {
+            c.setColor(Card.Color.BROWN);
+            c.setMoneyCost(1);
+            r0.addType(Resource.Type.WOOD);
+            r1.addType(Resource.Type.WOOD);
+            resources.add(r0);
+            resources.add(r1);
+            ce = (Player p) -> p.addResources(resources);
+        } else if (cardName.equals("quarry")) {
+            c.setColor(Card.Color.BROWN);
+            c.setMoneyCost(1);
+            r0.addType(Resource.Type.STONE);
+            r1.addType(Resource.Type.STONE);
+            resources.add(r0);
+            resources.add(r1);
+            ce = (Player p) -> p.addResources(resources);
+        } else if (cardName.equals("foundry")) {
+            c.setColor(Card.Color.BROWN);
+            c.setMoneyCost(1);
+            r0.addType(Resource.Type.ORE);
+            r1.addType(Resource.Type.ORE);
+            resources.add(r0);
+            resources.add(r1);
+            ce = (Player p) -> p.addResources(resources);
+        } else if (cardName.equals("stables")) { // red
+            c.setColor(Card.Color.RED);
+            r0.addType(Resource.Type.CLAY);
+            r1.addType(Resource.Type.WOOD);
+            r2.addType(Resource.Type.ORE);
+            cost.add(r0);
+            cost.add(r1);
+            cost.add(r2);
+            fr.add("apothecary");
+            ce = (Player p) -> p.addMilitary(2);
+        } else if (cardName.equals("walls")) {
+            c.setColor(Card.Color.RED);
+            r0.addType(Resource.Type.STONE);
+            r1.addType(Resource.Type.STONE);
+            r2.addType(Resource.Type.STONE);
+            cost.add(r0);
+            cost.add(r1);
+            cost.add(r2);
+            ce = (Player p) -> p.addMilitary(2);
+        } else if (cardName.equals("archery-range")) {
+            c.setColor(Card.Color.RED);
+            r0.addType(Resource.Type.WOOD);
+            r1.addType(Resource.Type.WOOD);
+            r2.addType(Resource.Type.ORE);
+            cost.add(r0);
+            cost.add(r1);
+            cost.add(r2);
+            fr.add("workshop");
+            ce = (Player p) -> p.addMilitary(2);
+        } else if (cardName.equals("training-ground")) {
+            c.setColor(Card.Color.RED);
+            r0.addType(Resource.Type.ORE);
+            r1.addType(Resource.Type.ORE);
+            r2.addType(Resource.Type.WOOD);
+            cost.add(r0);
+            cost.add(r1);
+            cost.add(r2);
+            ce = (Player p) -> p.addMilitary(2);
+        } else if (cardName.equals("aqueduct")) { // blue
+            c.setColor(Card.Color.BLUE);
+            r0.addType(Resource.Type.STONE);
+            r1.addType(Resource.Type.STONE);
+            r2.addType(Resource.Type.STONE);
+            cost.add(r0);
+            cost.add(r1);
+            cost.add(r2);
+            fr.add("baths");
+            ce = (Player p) -> p.addVP(5);
+        } else if (cardName.equals("temple")) {
+            c.setColor(Card.Color.BLUE);
+            r0.addType(Resource.Type.WOOD);
+            r1.addType(Resource.Type.CLAY);
+            r2.addType(Resource.Type.GLASS);
+            cost.add(r0);
+            cost.add(r1);
+            cost.add(r2);
+            fr.add("altar");
+            ce = (Player p) -> p.addVP(3);
+        } else if (cardName.equals("courthouse")) {
+            c.setColor(Card.Color.BLUE);
+            r0.addType(Resource.Type.CLAY);
+            r1.addType(Resource.Type.CLAY);
+            r2.addType(Resource.Type.LOOM);
+            cost.add(r0);
+            cost.add(r1);
+            cost.add(r2);
+            fr.add("scriptorium");
+            ce = (Player p) -> p.addVP(4);
+        } else if (cardName.equals("statue")) {
+            c.setColor(Card.Color.BLUE);
+            r0.addType(Resource.Type.ORE);
+            r1.addType(Resource.Type.ORE);
+            r2.addType(Resource.Type.WOOD);
+            cost.add(r0);
+            cost.add(r1);
+            cost.add(r2);
+            fr.add("theater");
+            ce = (Player p) -> p.addVP(4);
+        } else if (cardName.equals("dispensary")) { // green
+            c.setColor(Card.Color.GREEN);
+            r0.addType(Resource.Type.ORE);
+            r1.addType(Resource.Type.ORE);
+            r2.addType(Resource.Type.GLASS);
+            cost.add(r0);
+            cost.add(r1);
+            cost.add(r2);
+            fr.add("apothecary");
+            ce = (Player p) -> p.addScience(1);
+        } else if (cardName.equals("laboratory")) {
+            c.setColor(Card.Color.GREEN);
+            r0.addType(Resource.Type.CLAY);
+            r1.addType(Resource.Type.CLAY);
+            r2.addType(Resource.Type.PAPYRUS);
+            cost.add(r0);
+            cost.add(r1);
+            cost.add(r2);
+            fr.add("workshop");
+            ce = (Player p) -> p.addScience(0);
+        } else if (cardName.equals("library")) {
+            c.setColor(Card.Color.GREEN);
+            r0.addType(Resource.Type.STONE);
+            r1.addType(Resource.Type.STONE);
+            r2.addType(Resource.Type.LOOM);
+            cost.add(r0);
+            cost.add(r1);
+            cost.add(r2);
+            fr.add("scriptorium");
+            ce = (Player p) -> p.addScience(2);
+        } else if (cardName.equals("school")) {
+            c.setColor(Card.Color.GREEN);
+            r0.addType(Resource.Type.WOOD);
+            r1.addType(Resource.Type.PAPYRUS);
+            cost.add(r0);
+            cost.add(r1);
+            ce = (Player p) -> p.addScience(2);
+        } else if (cardName.equals("caravansery")) { // yellow
+            c.setColor(Card.Color.YELLOW);
+            r0.addType(Resource.Type.WOOD);
+            r1.addType(Resource.Type.WOOD);
+            cost.add(r0);
+            cost.add(r1);
+            fr.add("marketplace");
+            r2.addType(Resource.Type.WOOD);
+            r2.addType(Resource.Type.STONE);
+            r2.addType(Resource.Type.ORE);
+            r2.addType(Resource.Type.CLAY);
+            resources.add(r2);
+            ce = (Player p) -> p.addResources(resources);
+        } else if (cardName.equals("forum")) {
+            c.setColor(Card.Color.YELLOW);
+            r0.addType(Resource.Type.CLAY);
+            r1.addType(Resource.Type.CLAY);
+            cost.add(r0);
+            cost.add(r1);
+            fr.add("trading-post");
+            r2.addType(Resource.Type.GLASS);
+            r2.addType(Resource.Type.LOOM);
+            r2.addType(Resource.Type.PAPYRUS);
+            resources.add(r2);
+            ce = (Player p) -> p.addResources(resources);
+        } else if (cardName.equals("bazar")) {
+            c.setColor(Card.Color.YELLOW);
+            ce = (Player p) -> p.twoGrayLMR();
+        } else if (cardName.equals("vineyard")) {
+            c.setColor(Card.Color.YELLOW);
+            ce = (Player p) -> p.oneBrownLMR();
         } else {
             System.out.println("unsupported card -> " + cardName);
         } // ADD THE REST OF THE YELLOW
@@ -214,8 +399,8 @@ public class SevenWonders {
     }
 
     private void playGame() {
-        for (int i = 1; i <= 1; i++) {
-
+        for (int i = 1; i <= 2; i++) {
+            System.out.println("starting age " + i);
             // distribute cards
             int handSize = _ages.get(i).size() / _players.size();
             for (int j = 0; j < _players.size(); j++) {

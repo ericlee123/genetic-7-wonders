@@ -2,3 +2,4 @@
 - add market discount cards + trading
 - calculate science with wildcard
 - counterclockwise age 2?
+- add forward pointers for free cards
