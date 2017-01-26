@@ -1,0 +1,10 @@
+shipowners-guild
+workers-guild
+craftsman-guild
+magistrates-guild
+strategists-guild
+scientists-guild
+traders-guild
+philosophers-guild
+builders-guild
+spies-guild

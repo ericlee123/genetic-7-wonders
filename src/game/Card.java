@@ -13,7 +13,7 @@ import java.util.Set;
 public class Card {
 
     public enum Color {
-        GRAY, BROWN, RED, BLUE, GREEN, YELLOW
+        GRAY, BROWN, RED, BLUE, GREEN, YELLOW, PURPLE
     }
 
     private Color _color;

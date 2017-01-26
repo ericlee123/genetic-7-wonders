@@ -17,6 +17,9 @@ altar
 scriptorium
 apothecary
 workshop
+east-trading-post
+west-trading-post
+marketplace
 4
 tavern
 scriptorium
@@ -40,9 +43,12 @@ mine
 glassworks
 loom
 press
+marketplace
 7
 tavern
 workshop
 baths
 pawnshop
 stockade
+west-trading-post
+east-trading-post

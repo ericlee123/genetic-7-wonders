@@ -11,13 +11,11 @@ import java.util.*;
 public class SevenWonders {
 
     private List<Player> _players;
-
     private List<List<Card>> _ages;
 
     public SevenWonders(List<Player> players) {
         _players = players;
         _ages = new ArrayList<List<Card>>();
-        _ages.add(new ArrayList<Card>());
     }
 
     public int[] run() {
@@ -39,9 +37,9 @@ public class SevenWonders {
 
     private void generateDecks() {
         try {
-            buildAge(1);
-            buildAge(2);
-//            buildAge(3);
+            for (int i = 0; i < 3; i++) {
+                buildAge(i);
+            }
             shuffle();
         } catch (Exception e) {
             System.out.print("Could not build decks properly.");
@@ -50,25 +48,29 @@ public class SevenWonders {
     }
 
     private void buildAge(int age) throws Exception {
+
         _ages.add(new ArrayList<Card>());
-        Scanner scan = new Scanner(new File("src/game/cards-age-" + age + ".txt"));
+        Scanner scan = new Scanner(new File("src/game/cards-age-" + (age+1) + ".txt"));
         int playerReq = scan.nextInt();
         while (playerReq <= _players.size()) {
             scan.nextLine();
             while (scan.hasNext() && !scan.hasNextInt()) {
                 String cardName = scan.nextLine();
                 Card c = makeCard(cardName);
-                if (c == null) {
-                    System.out.println("c is null");
-                    throw new Exception();
+                if (c != null) { // TODO: remove this after all cards are implemented
+                    _ages.get(age).add(c);
                 }
-                _ages.get(age).add(c);
             }
             if (scan.hasNextInt()) {
                 playerReq = scan.nextInt();
             } else {
                 break;
             }
+        }
+
+        // guild cards
+        if (age == 2) {
+            // add numPlayers+2 guild cards to deck
         }
     }
 
@@ -98,6 +100,7 @@ public class SevenWonders {
         List<String> fr = new ArrayList<String>();
         Card.Effect ce = null;
 
+        // ========== AGE 1 ==========
         if (cardName.equals("loom")) { // gray
             c.setColor(Card.Color.GRAY);
             r0.addType(Resource.Type.LOOM);
@@ -222,7 +225,17 @@ public class SevenWonders {
         } else if (cardName.equals("tavern")) { // yellow
             c.setColor(Card.Color.YELLOW);
             ce = (Player p) -> p.addMoney(5);
-        } else if (cardName.equals("brickyard")) { // =============AGE 2================ brown
+        } else if (cardName.equals("marketplace")) {
+            // TODO: implement these
+            return null;
+        } else if (cardName.equals("west-trading-post")) {
+            return null;
+        } else if (cardName.equals("east-trading-post")) {
+            return null;
+        }
+
+        // ========== AGE 2 ==========
+        else if (cardName.equals("brickyard")) { // brown
             c.setColor(Card.Color.BROWN);
             c.setMoneyCost(1);
             r0.addType(Resource.Type.CLAY);
@@ -396,13 +409,251 @@ public class SevenWonders {
             ce = (Player p) -> p.addResources(resources);
         } else if (cardName.equals("bazar")) {
             c.setColor(Card.Color.YELLOW);
-            ce = (Player p) -> p.twoGrayLMR();
+            ce = (Player p) -> p.twoMoneyGrayLMR();
         } else if (cardName.equals("vineyard")) {
             c.setColor(Card.Color.YELLOW);
-            ce = (Player p) -> p.oneBrownLMR();
-        } else {
+            ce = (Player p) -> p.oneMoneyBrownLMR();
+        }
+
+        // ========== AGE 3 ==========
+        else if (cardName.equals("haven")) { // yellow
+            c.setColor(Card.Color.YELLOW);
+            r0.addType(Resource.Type.WOOD);
+            r1.addType(Resource.Type.ORE);
+            r2.addType(Resource.Type.LOOM);
+            cost.add(r0);
+            cost.add(r1);
+            cost.add(r2);
+            fr.add("forum");
+            ce = (Player p) -> p.oneMoneyOneVPBrownM();
+        } else if (cardName.equals("chamber-of-commerce")) {
+            c.setColor(Card.Color.YELLOW);
+            r0.addType(Resource.Type.CLAY);
+            r1.addType(Resource.Type.CLAY);
+            r2.addType(Resource.Type.PAPYRUS);
+            cost.add(r0);
+            cost.add(r1);
+            cost.add(r2);
+            ce = (Player p) -> p.twoMoneyTwoVPGrayM();
+        } else if (cardName.equals("lighthouse")) {
+            c.setColor(Card.Color.YELLOW);
+            r0.addType(Resource.Type.STONE);
+            r1.addType(Resource.Type.GLASS);
+            cost.add(r0);
+            cost.add(r1);
+            fr.add("caravansery");
+            ce = (Player p) -> p.oneMoneyOneVPYellowM();
+        } else if (cardName.equals("arena")) {
+            // TODO: implement this
+            return null;
+        } else if (cardName.equals("arsenal")) { // red
+            c.setColor(Card.Color.RED);
+            r0.addType(Resource.Type.WOOD);
+            r1.addType(Resource.Type.WOOD);
+            r2.addType(Resource.Type.ORE);
+            r3.addType(Resource.Type.LOOM);
+            cost.add(r0);
+            cost.add(r1);
+            cost.add(r2);
+            cost.add(r3);
+            ce = (Player p) -> p.addMilitary(3);
+        } else if (cardName.equals("siege-workshop")) {
+            c.setColor(Card.Color.RED);
+            r0.addType(Resource.Type.CLAY);
+            r1.addType(Resource.Type.CLAY);
+            r2.addType(Resource.Type.CLAY);
+            r3.addType(Resource.Type.WOOD);
+            cost.add(r0);
+            cost.add(r1);
+            cost.add(r2);
+            cost.add(r3);
+            fr.add("laboratory");
+            ce = (Player p) -> p.addMilitary(3);
+        } else if (cardName.equals("circus")) {
+            c.setColor(Card.Color.RED);
+            r0.addType(Resource.Type.STONE);
+            r1.addType(Resource.Type.STONE);
+            r2.addType(Resource.Type.STONE);
+            r3.addType(Resource.Type.ORE);
+            cost.add(r0);
+            cost.add(r1);
+            cost.add(r2);
+            cost.add(r3);
+            fr.add("training-ground");
+            ce = (Player p) -> p.addMilitary(3);
+        } else if (cardName.equals("fortifications")) {
+            c.setColor(Card.Color.RED);
+            r0.addType(Resource.Type.ORE);
+            r1.addType(Resource.Type.ORE);
+            r2.addType(Resource.Type.ORE);
+            r3.addType(Resource.Type.STONE);
+            cost.add(r0);
+            cost.add(r1);
+            cost.add(r2);
+            cost.add(r3);
+            fr.add("walls");
+            ce = (Player p) -> p.addMilitary(3);
+        } else if (cardName.equals("senate")) { // blue
+            c.setColor(Card.Color.BLUE);
+            r0.addType(Resource.Type.WOOD);
+            r1.addType(Resource.Type.WOOD);
+            r2.addType(Resource.Type.STONE);
+            r3.addType(Resource.Type.ORE);
+            cost.add(r0);
+            cost.add(r1);
+            cost.add(r2);
+            cost.add(r3);
+            fr.add("library");
+            ce = (Player p) -> p.addVP(6);
+        } else if (cardName.equals("gardens")) {
+            c.setColor(Card.Color.BLUE);
+            r0.addType(Resource.Type.CLAY);
+            r1.addType(Resource.Type.CLAY);
+            r2.addType(Resource.Type.WOOD);
+            cost.add(r0);
+            cost.add(r1);
+            cost.add(r2);
+            fr.add("statue");
+            ce = (Player p) -> p.addVP(5);
+        } else if (cardName.equals("town-hall")) {
+            c.setColor(Card.Color.BLUE);
+            r0.addType(Resource.Type.STONE);
+            r1.addType(Resource.Type.STONE);
+            r2.addType(Resource.Type.ORE);
+            r3.addType(Resource.Type.GLASS);
+            cost.add(r0);
+            cost.add(r1);
+            cost.add(r2);
+            cost.add(r3);
+            fr.add("statue");
+            ce = (Player p) -> p.addVP(6);
+        } else if (cardName.equals("pantheon")) {
+            c.setColor(Card.Color.BLUE);
+            r0.addType(Resource.Type.CLAY);
+            r1.addType(Resource.Type.CLAY);
+            r2.addType(Resource.Type.ORE);
+            r3.addType(Resource.Type.GLASS);
+            r4.addType(Resource.Type.PAPYRUS);
+            r5.addType(Resource.Type.LOOM);
+            cost.add(r0);
+            cost.add(r1);
+            cost.add(r2);
+            cost.add(r3);
+            cost.add(r4);
+            cost.add(r5);
+            fr.add("temple");
+            ce = (Player p) -> p.addVP(7);
+        } else if (cardName.equals("palace")) {
+            c.setColor(Card.Color.BLUE);
+            r0.addType(Resource.Type.STONE);
+            r1.addType(Resource.Type.ORE);
+            r2.addType(Resource.Type.WOOD);
+            r3.addType(Resource.Type.CLAY);
+            r4.addType(Resource.Type.GLASS);
+            r5.addType(Resource.Type.PAPYRUS);
+            r6.addType(Resource.Type.LOOM);
+            cost.add(r0);
+            cost.add(r1);
+            cost.add(r2);
+            cost.add(r3);
+            cost.add(r4);
+            cost.add(r5);
+            cost.add(r6);
+            ce = (Player p) -> p.addVP(8);
+        } else if (cardName.equals("lodge")) { // green
+            c.setColor(Card.Color.GREEN);
+            r0.addType(Resource.Type.CLAY);
+            r1.addType(Resource.Type.CLAY);
+            r2.addType(Resource.Type.PAPYRUS);
+            r3.addType(Resource.Type.LOOM);
+            cost.add(r0);
+            cost.add(r1);
+            cost.add(r2);
+            cost.add(r3);
+            fr.add("dispensary");
+            ce = (Player p) -> p.addScience(1);
+        } else if (cardName.equals("academy")) {
+            c.setColor(Card.Color.GREEN);
+            r0.addType(Resource.Type.STONE);
+            r1.addType(Resource.Type.STONE);
+            r2.addType(Resource.Type.STONE);
+            r3.addType(Resource.Type.GLASS);
+            cost.add(r0);
+            cost.add(r1);
+            cost.add(r2);
+            cost.add(r3);
+            fr.add("school");
+            ce = (Player p) -> p.addScience(1);
+        } else if (cardName.equals("university")) {
+            c.setColor(Card.Color.GREEN);
+            r0.addType(Resource.Type.WOOD);
+            r1.addType(Resource.Type.WOOD);
+            r2.addType(Resource.Type.PAPYRUS);
+            r3.addType(Resource.Type.GLASS);
+            cost.add(r0);
+            cost.add(r1);
+            cost.add(r2);
+            cost.add(r3);
+            fr.add("library");
+            ce = (Player p) -> p.addScience(2);
+        } else if (cardName.equals("study")) {
+            c.setColor(Card.Color.GREEN);
+            r0.addType(Resource.Type.WOOD);
+            r1.addType(Resource.Type.PAPYRUS);
+            r2.addType(Resource.Type.LOOM);
+            cost.add(r0);
+            cost.add(r1);
+            cost.add(r2);
+            fr.add("school");
+            ce = (Player p) -> p.addScience(0);
+        } else if (cardName.equals("observatory")) {
+            c.setColor(Card.Color.GREEN);
+            r0.addType(Resource.Type.ORE);
+            r1.addType(Resource.Type.ORE);
+            r2.addType(Resource.Type.GLASS);
+            r2.addType(Resource.Type.LOOM);
+            cost.add(r0);
+            cost.add(r1);
+            cost.add(r2);
+            cost.add(r3);
+            fr.add("laboratory");
+            ce = (Player p) -> p.addScience(0);
+        } else if (cardName.equals("shipowners-guild")) { // purple
+            c.setColor(Card.Color.PURPLE);
+            r0.addType(Resource.Type.WOOD);
+            r1.addType(Resource.Type.WOOD);
+            r2.addType(Resource.Type.WOOD);
+            r3.addType(Resource.Type.GLASS);
+            r4.addType(Resource.Type.PAPYRUS);
+            cost.add(r0);
+            cost.add(r1);
+            cost.add(r2);
+            cost.add(r3);
+            cost.add(r4);
+            ce = (Player p) -> p.oneVPBrownGrayPurpleM();
+        } else if (cardName.equals("workers-guild")) { // TODO: implement all of these
+
+        } else if (cardName.equals("craftsman-guild")) {
+
+        } else if (cardName.equals("magistrates-guild")) {
+
+        } else if (cardName.equals("strategists-guild")) {
+
+        } else if (cardName.equals("scientists-guild")) {
+
+        } else if (cardName.equals("traders-guild")) {
+
+        } else if (cardName.equals("philosophers-guild")) {
+
+        } else if (cardName.equals("builders-guild")) {
+
+        } else if (cardName.equals("spies-guild")) {
+
+        }
+
+        else {
             System.out.println("unsupported card -> " + cardName);
-        } // ADD THE REST OF THE YELLOW
+        }
 
         c.setCost(cost);
         c.setEffect(ce);
@@ -410,7 +661,7 @@ public class SevenWonders {
     }
 
     private void playGame() {
-        for (int i = 1; i <= 2; i++) {
+        for (int i = 0; i < 3; i++) {
 
             // distribute cards
             int handSize = _ages.get(i).size() / _players.size();
@@ -423,7 +674,7 @@ public class SevenWonders {
             }
 
             // do age
-            for (int j = 0; j < handSize; j++) {
+            for (int j = 0; j < handSize-1; j++) {
                 for (int k = 0; k < _players.size(); k++) {
                     _players.get(k).chooseCard();
                 }
@@ -448,5 +699,4 @@ public class SevenWonders {
         }
         return scores;
     }
-
 }
