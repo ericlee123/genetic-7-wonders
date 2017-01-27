@@ -26,6 +26,12 @@ public class Resource {
         return _types;
     }
 
+//    @Override
+//    public int hashCode() {
+//        String ughh = new String();
+//
+//    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Resource)) {

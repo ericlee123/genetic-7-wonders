@@ -22,12 +22,7 @@ public class SevenWonders {
     public void run() {
         setPlayerPositions();
         generateDecks();
-        try {
-            assignBoards();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
+        assignBoards();
         playGame();
     }
 
@@ -41,45 +36,46 @@ public class SevenWonders {
     }
 
     private void generateDecks() {
-        try {
-            for (int i = 0; i < 3; i++) {
-                buildAge(i);
-            }
-//            shuffle();
-        } catch (Exception e) {
-            System.out.print("Could not build decks properly.");
-            e.printStackTrace();
-            System.exit(1);
-        }
+        buildAges();
+//        shuffle();
     }
 
-    private void buildAge(int age) throws Exception {
+    private void buildAges() {
 
-        _ages.add(new ArrayList<Card>());
-        Scanner scan = new Scanner(new File("src/game/cards-age-" + (age+1) + ".txt"));
-        int playerReq = scan.nextInt();
-        while (playerReq <= _players.size()) {
-            scan.nextLine();
-            while (scan.hasNext() && !scan.hasNextInt()) {
-                String cardName = scan.nextLine();
-                Card c = makeCard(cardName);
-                if (c == null) { // TODO: remove this after all cards are implemented
+        for (int age = 0; age < 3; age++) {
+
+            Scanner scan = null;
+            try {
+                scan = new Scanner(new File("src/game/cards-age-" + (age + 1) + ".txt"));
+            } catch (FileNotFoundException e) {
+                System.out.println("error reading in cards-age-" + (age+1) + ".txt");
+                System.exit(1);
+            }
+
+            _ages.add(new ArrayList<Card>());
+            int playerReq = scan.nextInt();
+            while (playerReq <= _players.size()) {
+                scan.nextLine();
+                while (scan.hasNext() && !scan.hasNextInt()) {
+                    String cardName = scan.nextLine();
+                    Card c = makeCard(cardName);
+                    if (c == null) { // TODO: remove this after all cards are implemented
 //                    System.out.println("can't make " + cardName);
+                    } else {
+                        _ages.get(age).add(c);
+                    }
                 }
-                else {
-                    _ages.get(age).add(c);
+                if (scan.hasNextInt()) {
+                    playerReq = scan.nextInt();
+                } else {
+                    break;
                 }
             }
-            if (scan.hasNextInt()) {
-                playerReq = scan.nextInt();
-            } else {
-                break;
-            }
-        }
 
-        // guild cards
-        if (age == 2) {
-            // add numPlayers+2 guild cards to deck
+            // guild cards
+            if (age == 2) {
+                // add numPlayers+2 guild cards to deck
+            }
         }
     }
 
@@ -669,9 +665,16 @@ public class SevenWonders {
         return c;
     }
 
-    private void assignBoards() throws FileNotFoundException {
+    private void assignBoards() {
 
-        Scanner scan = new Scanner(new File("src/game/boards.txt"));
+        Scanner scan = null;
+        try {
+            scan = new Scanner(new File("src/game/boards.txt"));
+        } catch (FileNotFoundException e) {
+            System.out.println("error reading in boards.txt");
+            System.exit(1);
+        }
+
         List<Board> boards = new ArrayList<Board>();
         while (scan.hasNext()) {
             boards.add(makeBoard(scan.nextLine()));
@@ -727,7 +730,7 @@ public class SevenWonders {
             }
 
             // do age
-            for (int j = 0; j < 2/*handSize-1*/; j++) {
+            for (int j = 0; j < 5/*handSize-1*/; j++) {
                 for (int k = 0; k < _players.size(); k++) {
                     _players.get(k).chooseCard();
                 }

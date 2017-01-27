@@ -163,7 +163,6 @@ public class Player {
     }
 
     public void flip() {
-
         if (_chosenCard == -1) {
             System.out.println("SOMEONE DIDN'T CHOOSE A CARD!!!!");
         }
@@ -186,7 +185,6 @@ public class Player {
                 return true;
             }
         }
-
         if (_money < card.getMoneyCost()) {
             return false;
         }
@@ -196,7 +194,13 @@ public class Player {
         goods.addAll(_resources);
         List<Resource> cost = card.getCost();
         for (int i = 0; i < cost.size(); i++) {
-            if (!goods.remove(cost.get(i))) {
+            boolean paid = false;
+            for (Resource g : goods) {
+                if (g.equals(cost.get(i))) {
+                    paid = true;
+                }
+            }
+            if (!paid) {
                 return false;
             }
         }
