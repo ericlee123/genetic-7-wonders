@@ -21,6 +21,8 @@ public class Player {
     private Map<Card.Color, Integer> _colorFreq;
     private Map<Card.Color, Integer> _vpPerColor;
 
+    private int _chosenCard;
+    private boolean _burn;
     private Board _board;
     private List<Card> _hand;
     private Set<String> _selected;
@@ -54,6 +56,8 @@ public class Player {
         _vpPerColor.put(Card.Color.YELLOW, 0);
         _vpPerColor.put(Card.Color.PURPLE, 0);
 
+        _chosenCard = -1;
+        _burn = false;
         _board = null;
         _hand = null;
         _selected = new HashSet<String>();
@@ -66,12 +70,15 @@ public class Player {
     public Player(Player copy) {
         _money = copy.getMoney();
         _military = copy.getMilitary();
-        _resources = copy.getResources();
+        _resources = new HashSet<Resource>();
+        _resources.addAll(copy.getResources());
         _science = copy.getScience();
         _vp = copy.getVP();
 
-        _colorFreq = copy.getColorFreq();
-        _vpPerColor = copy.getVPPerColor();
+        _colorFreq = new HashMap<Card.Color, Integer>();
+        _colorFreq.putAll(copy.getColorFreq());
+        _vpPerColor = new HashMap<Card.Color, Integer>();
+        _vpPerColor.putAll(copy.getVPPerColor());
 
         _board = copy.getBoard();
         _leftNeighbor = copy.getLeftNeighbor();
@@ -101,27 +108,76 @@ public class Player {
     }
 
     public void chooseCard() {
-
-        int index = 0;
         if (!_stupid) {
+            boolean takeOne = false;
             double potential = 0;
             for (int i = 0; i < _hand.size(); i++) {
                 if (afford(_hand.get(i))) { // TODO: if player can't afford anything, burn for 3 coins
+                    takeOne = true;
                     Player temp = new Player(this);
                     _hand.get(i).affect(temp);
                     if (temp.assess() > potential) {
                         potential = temp.assess();
-                        index = i;
+                        _chosenCard = i;
                     }
                 }
             }
+            if (!takeOne) {
+                System.out.println("can't take any ===========================");
+
+                for (int i = 0; i < _hand.size(); i++) {
+                    System.out.print(_hand.get(i).getName() + " ");
+                }
+                System.out.println();
+
+                for (Resource res : _resources) {
+                    for (Resource.Type rt : res.getTypes()) {
+                        if (rt == Resource.Type.CLAY) {
+                            System.out.print("clay ");
+                        } else if (rt == Resource.Type.ORE) {
+                            System.out.print("ore ");
+                        } else if (rt == Resource.Type.STONE) {
+                            System.out.print("stone ");
+                        } else if (rt == Resource.Type.WOOD) {
+                            System.out.print("wood ");
+                        } else if (rt == Resource.Type.GLASS) {
+                            System.out.print("glass ");
+                        } else if (rt == Resource.Type.LOOM) {
+                            System.out.print("loom ");
+                        } else if (rt == Resource.Type.PAPYRUS) {
+                            System.out.print("papyrus ");
+                        }
+                    }
+                    System.out.println();
+                }
+
+                _chosenCard = (int) (Math.random() * _hand.size()); // TODO: make this smarter later
+                _burn = true;
+            } else {
+//                System.out.println("can take");
+            }
         } else {
-           index = (int) (Math.random() * _hand.size());
+            _chosenCard = (int) (Math.random() * _hand.size());
         }
 
-        _hand.get(index).affect(this);
-        _colorFreq.put(_hand.get(index).getColor(), _colorFreq.get(_hand.get(index).getColor())+1);
-        _hand.remove(index);
+    }
+
+    public void flip() {
+
+        if (_chosenCard == -1) {
+            System.out.println("SOMEONE DIDN'T CHOOSE A CARD!!!!");
+        }
+
+        if (_burn) {
+            _hand.remove(_chosenCard);
+            _chosenCard = -1;
+            _money += 3;
+        } else {
+            _hand.get(_chosenCard).affect(this);
+            _colorFreq.put(_hand.get(_chosenCard).getColor(), _colorFreq.get(_hand.get(_chosenCard).getColor()) + 1);
+            _hand.remove(_chosenCard);
+            _chosenCard = -1;
+        }
     }
 
     public boolean afford(Card card) {

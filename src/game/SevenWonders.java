@@ -3,6 +3,7 @@ package game;
 import ai.Player;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.*;
 
 /**
@@ -18,18 +19,22 @@ public class SevenWonders {
         _ages = new ArrayList<List<Card>>();
     }
 
-    public int[] run() {
+    public void run() {
         setPlayerPositions();
         generateDecks();
+        try {
+            assignBoards();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
         playGame();
-        return getResults();
     }
 
     private void setPlayerPositions() {
         for (int i = 0; i < _players.size(); i++) {
             int left = (i == 0) ? _players.size()-1 : i-1;
             int right = (i == _players.size()-1) ? 0 : i+1;
-
             _players.get(i).setLeftNeighbor(_players.get(left));
             _players.get(i).setRightNeighbor(_players.get(right));
         }
@@ -40,10 +45,11 @@ public class SevenWonders {
             for (int i = 0; i < 3; i++) {
                 buildAge(i);
             }
-            shuffle();
+//            shuffle();
         } catch (Exception e) {
             System.out.print("Could not build decks properly.");
             e.printStackTrace();
+            System.exit(1);
         }
     }
 
@@ -57,7 +63,10 @@ public class SevenWonders {
             while (scan.hasNext() && !scan.hasNextInt()) {
                 String cardName = scan.nextLine();
                 Card c = makeCard(cardName);
-                if (c != null) { // TODO: remove this after all cards are implemented
+                if (c == null) { // TODO: remove this after all cards are implemented
+//                    System.out.println("can't make " + cardName);
+                }
+                else {
                     _ages.get(age).add(c);
                 }
             }
@@ -660,8 +669,52 @@ public class SevenWonders {
         return c;
     }
 
+    private void assignBoards() throws FileNotFoundException {
+
+        Scanner scan = new Scanner(new File("src/game/boards.txt"));
+        List<Board> boards = new ArrayList<Board>();
+        while (scan.hasNext()) {
+            boards.add(makeBoard(scan.nextLine()));
+        }
+        for (int i = 0; i < _players.size(); i++) {
+//            int index = (int) (Math.random() * boards.size());
+            int index = i;
+            _players.get(i).setBoard(boards.get/*remove*/(index));
+            _players.get(i).getBoard().initialize(_players.get(i));
+        }
+    }
+
+    private Board makeBoard(String boardName) {
+        Board b = new Board();
+        Resource r = new Resource();
+        if (boardName.equals("rhodes")) {
+            r.addType(Resource.Type.ORE);
+            b.setStartingColor(Card.Color.BROWN);
+        } else if (boardName.equals("alexandria")) {
+            r.addType(Resource.Type.GLASS);
+            b.setStartingColor(Card.Color.GRAY);
+        } else if (boardName.equals("ephesus")) {
+            r.addType(Resource.Type.PAPYRUS);
+            b.setStartingColor(Card.Color.GRAY);
+        } else if (boardName.equals("babylon")) {
+            r.addType(Resource.Type.CLAY);
+            b.setStartingColor(Card.Color.BROWN);
+        } else if (boardName.equals("olympia")) {
+            r.addType(Resource.Type.WOOD);
+            b.setStartingColor(Card.Color.BROWN);
+        } else if (boardName.equals("halicarnassus")) {
+            r.addType(Resource.Type.LOOM);
+            b.setStartingColor(Card.Color.GRAY);
+        } else if (boardName.equals("giza")) {
+            r.addType(Resource.Type.STONE);
+            b.setStartingColor(Card.Color.BROWN);
+        }
+        b.setStartingResource(r);
+        return b;
+    }
+
     private void playGame() {
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 1; i++) {
 
             // distribute cards
             int handSize = _ages.get(i).size() / _players.size();
@@ -674,10 +727,15 @@ public class SevenWonders {
             }
 
             // do age
-            for (int j = 0; j < handSize-1; j++) {
+            for (int j = 0; j < 2/*handSize-1*/; j++) {
                 for (int k = 0; k < _players.size(); k++) {
                     _players.get(k).chooseCard();
                 }
+                for (int k = 0; k < _players.size(); k++) {
+                    _players.get(k).flip();
+                }
+
+                // TODO: counterclockwise on age 2
                 List<Card> temp = _players.get(0).getHand();
                 for (int k = 0; k < _players.size() - 1; k++) {
                     _players.get(k).setHand(_players.get(k+1).getHand());
@@ -690,13 +748,5 @@ public class SevenWonders {
                 _players.get(j).compareMilitary(i);
             }
         }
-    }
-
-    private int[] getResults() {
-        int[] scores = new int[_players.size()];
-        for (int i = 0; i < _players.size(); i++) {
-            scores[i] = _players.get(i).calculateVP();
-        }
-        return scores;
     }
 }

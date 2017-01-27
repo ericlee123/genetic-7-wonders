@@ -3,5 +3,4 @@
 - calculate science with wildcard
 - counterclockwise age 2?
 - add forward pointers for free cards
-- check cost when choosing card
 - compute VP correctly for age 3 yellow cards

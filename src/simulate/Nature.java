@@ -12,9 +12,9 @@ public class Nature {
 
     public static void main(String[] args) {
 
-        int numGenerations = 5;
+        int numGenerations = 1;
         int playersPerGame = 6;
-        int populationSize = 600;
+        int populationSize = 6;
         List<Player> population = freshPopulation(populationSize);
         int playerIndex = 0;
 
@@ -24,15 +24,17 @@ public class Nature {
             Map<Player, Integer> roulette = new HashMap<Player, Integer>();
             int totalFitness = 0;
 
+            // everyone play
             for (int j = 0; j < populationSize / playersPerGame; j++) {
                 List<Player> curPlayers = new ArrayList<Player>();
                 for (int k = 0; k < playersPerGame; k++) {
                     curPlayers.add(population.get(playerIndex++));
                 }
                 SevenWonders game = new SevenWonders(curPlayers);
-                int[] results = game.run();
+                game.run();
+
                 for (int k = 0; k < playersPerGame; k++) {
-                    int fitness = (int) (Math.pow(results[k] - 55, 2));
+                    int fitness = curPlayers.get(k).calculateVP();
                     roulette.put(curPlayers.get(k), fitness);
                     totalFitness += fitness;
                 }
@@ -41,8 +43,8 @@ public class Nature {
             System.out.println("gen " + i);
             printPopulationStats(population);
 
-            population = breed(populationSize-42, roulette, totalFitness);
-            population.addAll(freshPopulation(42));
+            population = breed(populationSize, roulette, totalFitness);
+//            population.addAll(freshPopulation(42));
             mutate(population);
         }
     }
@@ -52,7 +54,8 @@ public class Nature {
         for (int i = 0; i < populationSize; i++) {
             double[] weights = new double[5];
             for (int j = 0; j < weights.length; j++) {
-                weights[j] = (Math.random() * 1000);
+//                weights[j] = (Math.random() * 1000);
+                weights[j] = 1;
             }
             Player p = new Player();
             p.setWeights(weights);
@@ -130,7 +133,7 @@ public class Nature {
 
     private static void printPopulationStats(List<Player> population) {
 
-        int minVP = 100;
+        int minVP = 500;
         int maxVP = 0;
         int totalVP = 0;
         for (int i = 0; i < population.size(); i++) {
