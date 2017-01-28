@@ -88,19 +88,31 @@ public class Player {
     }
 
     public double assess() {
-        double value = 0;
-        value += _money * _weights[0];
-        value += _military * _weights[1];
-        value += _resources.size() * _weights[2];
+//        double value = 0;
+//        value += _money * _weights[0];
+//        value += _military * _weights[1];
+//        value += _resources.size() * _weights[2];
+//
+//        int scienceTotal = 0;
+//        for (int i = 0; i < _science.length; i++) {
+//            scienceTotal += _science[i];
+//        }
+//        value += scienceTotal * _weights[3];
+//
+//        value += _vp * _weights[4];
+//
+//        if (value < 0) {
+//            System.out.println("money " + _money);
+//            System.out.println("military " + _military);
+//            System.out.println("resources " + _resources.size());
+//            System.out.println("st " + scienceTotal);
+//            System.out.println("vp " + _vp);
+//            for (int i = 0; i < _weights.length; i++) {
+//                System.out.print(_weights[i] + " ");
+//            }
+//        }
 
-        int scienceTotal = 0;
-        for (int i = 0; i < _science.length; i++) {
-            scienceTotal += _science[i];
-        }
-        value += scienceTotal * _weights[3];
-
-        value += _vp * _weights[4];
-        return value;
+        return _weights[0] * calculateVP();
     }
 
     public void stupid() {
@@ -110,7 +122,7 @@ public class Player {
     public void chooseCard() {
         if (!_stupid) {
             boolean takeOne = false;
-            double potential = 0;
+            double potential = -50000;
             for (int i = 0; i < _hand.size(); i++) {
                 if (afford(_hand.get(i))) { // TODO: if player can't afford anything, burn for 3 coins
                     takeOne = true;
@@ -123,43 +135,12 @@ public class Player {
                 }
             }
             if (!takeOne) {
-                System.out.println("can't take any ===========================");
-
-                for (int i = 0; i < _hand.size(); i++) {
-                    System.out.print(_hand.get(i).getName() + " ");
-                }
-                System.out.println();
-
-                for (Resource res : _resources) {
-                    for (Resource.Type rt : res.getTypes()) {
-                        if (rt == Resource.Type.CLAY) {
-                            System.out.print("clay ");
-                        } else if (rt == Resource.Type.ORE) {
-                            System.out.print("ore ");
-                        } else if (rt == Resource.Type.STONE) {
-                            System.out.print("stone ");
-                        } else if (rt == Resource.Type.WOOD) {
-                            System.out.print("wood ");
-                        } else if (rt == Resource.Type.GLASS) {
-                            System.out.print("glass ");
-                        } else if (rt == Resource.Type.LOOM) {
-                            System.out.print("loom ");
-                        } else if (rt == Resource.Type.PAPYRUS) {
-                            System.out.print("papyrus ");
-                        }
-                    }
-                    System.out.println();
-                }
-
                 _chosenCard = (int) (Math.random() * _hand.size()); // TODO: make this smarter later
                 _burn = true;
-            } else {
-//                System.out.println("can take");
             }
         } else {
             _chosenCard = (int) (Math.random() * _hand.size());
         }
-
     }
 
     public void flip() {
@@ -173,6 +154,7 @@ public class Player {
             _money += 3;
         } else {
             _hand.get(_chosenCard).affect(this);
+            _selected.add(_hand.get(_chosenCard).getName());
             _colorFreq.put(_hand.get(_chosenCard).getColor(), _colorFreq.get(_hand.get(_chosenCard).getColor()) + 1);
             _hand.remove(_chosenCard);
             _chosenCard = -1;

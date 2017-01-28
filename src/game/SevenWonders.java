@@ -37,7 +37,7 @@ public class SevenWonders {
 
     private void generateDecks() {
         buildAges();
-//        shuffle();
+        shuffle();
     }
 
     private void buildAges() {
@@ -717,7 +717,7 @@ public class SevenWonders {
     }
 
     private void playGame() {
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 3; i++) {
 
             // distribute cards
             int handSize = _ages.get(i).size() / _players.size();
@@ -730,7 +730,7 @@ public class SevenWonders {
             }
 
             // do age
-            for (int j = 0; j < 5/*handSize-1*/; j++) {
+            for (int j = 0; j < handSize-1; j++) {
                 for (int k = 0; k < _players.size(); k++) {
                     _players.get(k).chooseCard();
                 }
