@@ -29,8 +29,8 @@ public class Player {
     private Player _leftNeighbor;
     private Player _rightNeighbor;
 
-    private double[] _weights; // money military resources science vp
-    private boolean _stupid;
+    private double[] _weights; // money military resources science vp futureVP
+    private boolean _greedy;
 
     public Player() {
         _money = 2;
@@ -64,7 +64,7 @@ public class Player {
         _leftNeighbor = null;
         _rightNeighbor = null;
 
-        _weights = new double[5];
+        _weights = new double[6];
     }
 
     public Player(Player copy) {
@@ -88,58 +88,50 @@ public class Player {
     }
 
     public double assess() {
-//        double value = 0;
-//        value += _money * _weights[0];
-//        value += _military * _weights[1];
-//        value += _resources.size() * _weights[2];
-//
-//        int scienceTotal = 0;
-//        for (int i = 0; i < _science.length; i++) {
-//            scienceTotal += _science[i];
-//        }
-//        value += scienceTotal * _weights[3];
-//
-//        value += _vp * _weights[4];
-//
-//        if (value < 0) {
-//            System.out.println("money " + _money);
-//            System.out.println("military " + _military);
-//            System.out.println("resources " + _resources.size());
-//            System.out.println("st " + scienceTotal);
-//            System.out.println("vp " + _vp);
-//            for (int i = 0; i < _weights.length; i++) {
-//                System.out.print(_weights[i] + " ");
-//            }
-//        }
+        double score = 0;
+        score += _weights[0] * _money;
+        score += _weights[1] * _military;
+        score += _weights[2] * _resources.size();
 
-        return _weights[0] * calculateVP();
+        int totalScience = 0;
+        for (int i = 0; i < _science.length; i++) {
+            totalScience += _science[i];
+        }
+        score += _weights[3] * totalScience;
+
+        score += _weights[4] * _vp;
+        score += _weights[5] * calculateVP();
+
+        return score;
     }
 
-    public void stupid() {
-        _stupid = true;
+    public void greedy() {
+        _greedy = true;
     }
 
     public void chooseCard() {
-        if (!_stupid) {
-            boolean takeOne = false;
-            double potential = -50000;
-            for (int i = 0; i < _hand.size(); i++) {
-                if (afford(_hand.get(i))) { // TODO: if player can't afford anything, burn for 3 coins
-                    takeOne = true;
-                    Player temp = new Player(this);
-                    _hand.get(i).affect(temp);
-                    if (temp.assess() > potential) {
-                        potential = temp.assess();
-                        _chosenCard = i;
-                    }
+
+        List<Card> _canAfford = new ArrayList<Card>();
+        for (int i = 0; i < _hand.size(); i++) {
+            if (afford(_hand.get(i))) {
+                _canAfford.add(_hand.get(i));
+            }
+        }
+
+        if (_canAfford.size() == 0) {
+            _chosenCard = (int) (Math.random() * _hand.size());
+            _burn = true;
+        } else {
+            double maxScore = -50000000;
+            for (int i = 0; i < _canAfford.size(); i++) {
+                Player p = new Player(this);
+                _canAfford.get(i).affect(p);
+                double curScore = (_greedy) ? p.calculateVP() : p.assess();
+                if (curScore > maxScore) {
+                    maxScore = curScore;
+                    _chosenCard = i;
                 }
             }
-            if (!takeOne) {
-                _chosenCard = (int) (Math.random() * _hand.size()); // TODO: make this smarter later
-                _burn = true;
-            }
-        } else {
-            _chosenCard = (int) (Math.random() * _hand.size());
         }
     }
 

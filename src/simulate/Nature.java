@@ -12,56 +12,53 @@ public class Nature {
 
     public static void main(String[] args) {
 
-        int numGenerations = 100;
+        int numGenerations = 1000;
         int playersPerGame = 6;
         int populationSize = 100;
         List<Player> population = freshPopulation(populationSize);
 
+        List<Player> babies = new ArrayList<Player>();
+        babies.addAll(population);
+
         for (int i = 0; i < numGenerations; i++) {
 
-            Map<Player, Integer> roulette = new HashMap<Player, Integer>();
-            int totalFitness = 0;
-
-            double weight = 0;
-            for (int j = 0; j < population.size(); j++) {
-                weight += population.get(j).getWeights()[0];
-            }
-            if (i == 0 || i == numGenerations-1) {
-                System.out.printf("avg weight -> %.3f\n", weight / population.size());
+            if (i % 50 == 0) {
+                System.out.println("gen " + i);
             }
 
             // play everyone against randoms
+            Map<Player, Integer> roulette = new HashMap<Player, Integer>();
+            int totalFitness = 0;
             for (int j = 0; j < populationSize; j++) {
-                playAgainstRandoms(population.get(j), playersPerGame);
+                playAgainstGreedy(population.get(j), playersPerGame);
 
-                int fitness = population.get(j).calculateVP() - 50;
-                if (fitness < 0) {
-                    continue;
-                }
+                int fitness = population.get(j).calculateVP();
+
                 roulette.put(population.get(j), (int) Math.pow(fitness, 2));
                 totalFitness += fitness;
             }
 
-            int totalVP = 0;
-            for (int j = 0; j < population.size(); j++) {
-                totalVP += population.get(j).calculateVP();
-            }
-            if (i == 0 || i == numGenerations-1) {
-                System.out.printf("avg vp -> %.3f\n", ((double) totalVP) / population.size());
-            }
-
-            population = breed(populationSize-50, roulette, totalFitness);
-            population.addAll(freshPopulation(50));
-//            mutate(population);
+            population = breed(populationSize, roulette, totalFitness);
+            mutate(population);
         }
+
+        // make new players with only weights copied over
+        List<Player> evolved = new ArrayList<Player>();
+        for (int i = 0; i < population.size(); i++) {
+            Player p = new Player();
+            p.setWeights(population.get(i).getWeights());
+            evolved.add(p);
+        }
+
+        compare(babies, evolved, 1000);
     }
 
     private static List<Player> freshPopulation(int populationSize) {
         List<Player> population = new ArrayList<Player>();
         for (int i = 0; i < populationSize; i++) {
-            double[] weights = new double[5];
+            double[] weights = new double[6];
             for (int j = 0; j < weights.length; j++) {
-                weights[j] = (Math.random()*60) - 20;
+                weights[j] = (Math.random()*20) - 10;
             }
             Player p = new Player();
             p.setWeights(weights);
@@ -70,21 +67,14 @@ public class Nature {
         return population;
     }
 
-    private static void playAgainstRandoms(Player smart, int playersPerGame) {
-
+    private static void playAgainstGreedy(Player smart, int playersPerGame) {
         List<Player> players = new ArrayList<Player>();
         for (int i = 0; i < playersPerGame-1; i++) {
             Player p = new Player();
-//            p.stupid();
-            double[] weights = new double[5];
-            for (int j = 0; j < weights.length; j++) {
-                weights[j] = 1;
-            }
-            p.setWeights(weights);
+            p.greedy();
             players.add(p);
         }
         players.add(smart);
-
         SevenWonders game = new SevenWonders(players);
         game.run();
     }
@@ -125,38 +115,51 @@ public class Nature {
     }
 
     private static void mutate(List<Player> population) {
-        double mutationProb = 0.001;
+        double mutationProb = 0.01;
         for (int i = 0; i < population.size(); i++) {
             for (int j = 0; j < population.get(i).getWeights().length; j++) {
                 if (Math.random() < mutationProb) {
-                    population.get(i).getWeights()[j] += (Math.random() * 10) - 5;
+                    population.get(i).getWeights()[j] += (Math.random() * 5) - 2.5;
                 }
             }
         }
     }
 
-    private static double totalAvgVP = 0;
-
     private static void printPopulationStats(List<Player> population) {
 
-        int minVP = 500;
-        int maxVP = 0;
+        double totalWeight = 0;
         int totalVP = 0;
-        double weight0 = 0;
+
         for (int i = 0; i < population.size(); i++) {
-            int curVP = population.get(i).calculateVP();
-            totalVP += curVP;
-            minVP = (curVP < minVP) ? curVP : minVP;
-            maxVP = (curVP > maxVP) ? curVP : maxVP;
-
-            weight0 += population.get(i).getWeights()[0];
+            totalVP += population.get(i).calculateVP();
+            totalWeight += population.get(i).getWeights()[0];
         }
+        System.out.printf("avg vp = %.3f %.3f\n", ((double) totalVP) / population.size(), totalWeight / population.size());
+    }
 
-        System.out.printf("avg VP -> %.3f\n", ((double) totalVP) / population.size());
-        totalAvgVP += ((double) totalVP) / population.size();
-        System.out.printf("avg weight -> %.3f\n", weight0 / population.size());
-//        System.out.printf("fuck %.3f\n\n", weight0 / population.size());
-//        System.out.printf("min VP -> %d\n", minVP);
-//        System.out.printf("max VP -> %d\n", maxVP);
+    private static void compare(List<Player> babies, List<Player> evolved, int numTests) {
+        int evolvedWins = 0;
+        for (int i = 0; i < numTests; i++) {
+            if (i % 100 == 0) {
+                System.out.println("test " + i);
+            }
+            int babyVP = 0;
+            int evolvedVP = 0;
+            for (int j = 0; j < babies.size(); j++) {
+                Player b = new Player();
+                Player e = new Player();
+                b.setWeights(babies.get(j).getWeights());
+                e.setWeights(evolved.get(j).getWeights());
+                playAgainstGreedy(b, 6);
+                playAgainstGreedy(e, 6);
+                babyVP += b.calculateVP();
+                evolvedVP += e.calculateVP();
+            }
+            if (evolvedVP > babyVP) {
+                evolvedWins++;
+            }
+        }
+        System.out.println("baby wins    -> " + (numTests - evolvedWins));
+        System.out.println("evolved wins -> " + evolvedWins);
     }
 }
