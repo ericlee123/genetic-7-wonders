@@ -1,8 +1,6 @@
-package ai;
+package game;
 
-import game.Board;
-import game.Card;
-import game.Resource;
+import ai.Strategy;
 
 import java.util.*;
 
@@ -29,8 +27,8 @@ public class Player {
     private Player _leftNeighbor;
     private Player _rightNeighbor;
 
-    private double[] _weights; // money military resources science vp futureVP
-    private boolean _greedy;
+    private double[][] _weights; // (per age) money military resources science vp futureVP
+    private Strategy _strategy;
 
     public Player() {
         _money = 2;
@@ -64,7 +62,9 @@ public class Player {
         _leftNeighbor = null;
         _rightNeighbor = null;
 
-        _weights = new double[6];
+        for (int i = 0; i < _weights.length; i++) {
+            _weights[i] = new double[6];
+        }
     }
 
     public Player(Player copy) {
@@ -87,6 +87,25 @@ public class Player {
         _weights = copy.getWeights();
     }
 
+    public int calculateVP() {
+        int vp = 0;
+        vp += _money / 3;
+        vp += _vp;
+
+        int minScience = _science[0];
+        for (int i = 0; i < 3; i++) { // do this right later
+            vp += Math.pow(_science[i], 2);
+            minScience = (_science[i] < minScience) ? _science[i] : minScience;
+        }
+        vp += 7 * minScience;
+
+        for (Card.Color color : _vpPerColor.keySet()) {
+            _vp += _vpPerColor.get(color) * _colorFreq.get(color);
+        }
+
+        return vp;
+    }
+
     public double assess() {
         double score = 0;
         score += _weights[0] * _money;
@@ -105,41 +124,15 @@ public class Player {
         return score;
     }
 
-    public void greedy() {
-        _greedy = true;
-    }
-
     public void chooseCard() {
-
-        List<Card> _canAfford = new ArrayList<Card>();
-        for (int i = 0; i < _hand.size(); i++) {
-            if (afford(_hand.get(i))) {
-                _canAfford.add(_hand.get(i));
-            }
-        }
-
-        if (_canAfford.size() == 0) {
-            _chosenCard = (int) (Math.random() * _hand.size());
+        _chosenCard = _strategy.chooseCard(this);
+        if (_chosenCard == -1) {
             _burn = true;
-        } else {
-            double maxScore = -50000000;
-            for (int i = 0; i < _canAfford.size(); i++) {
-                Player p = new Player(this);
-                _canAfford.get(i).affect(p);
-                double curScore = (_greedy) ? p.calculateVP() : p.assess();
-                if (curScore > maxScore) {
-                    maxScore = curScore;
-                    _chosenCard = i;
-                }
-            }
+            _chosenCard = (int) (Math.random() * _hand.size());
         }
     }
 
     public void flip() {
-        if (_chosenCard == -1) {
-            System.out.println("SOMEONE DIDN'T CHOOSE A CARD!!!!");
-        }
-
         if (_burn) {
             _hand.remove(_chosenCard);
             _chosenCard = -1;
@@ -179,6 +172,20 @@ public class Player {
             }
         }
         return true;
+    }
+
+    // setters and getters
+
+    public void setStrategy(Strategy strategy) {
+        _strategy = strategy;
+    }
+
+    public void setChosenCard(int card) {
+        _chosenCard = card;
+    }
+
+    public int getChosenCard() {
+        return _chosenCard;
     }
 
     public void setBoard(Board board) {
@@ -265,11 +272,11 @@ public class Player {
         return _rightNeighbor;
     }
 
-    public void setWeights(double[] weights) {
+    public void setWeights(double[][] weights) {
         _weights = weights;
     }
 
-    public double[] getWeights() {
+    public double[][] getWeights() {
         return _weights;
     }
 
@@ -288,6 +295,8 @@ public class Player {
             _vp--;
         }
     }
+
+    // special card effects
 
     public void twoMoneyGrayLMR() {
         _money += 2 * _leftNeighbor.getColorFreq().get(Card.Color.GRAY);
@@ -320,24 +329,5 @@ public class Player {
         _vpPerColor.put(Card.Color.BROWN, _vpPerColor.get(Card.Color.BROWN)+1);
         _vpPerColor.put(Card.Color.GRAY, _vpPerColor.get(Card.Color.GRAY)+1);
         _vpPerColor.put(Card.Color.PURPLE, _vpPerColor.get(Card.Color.PURPLE)+1);
-    }
-
-    public int calculateVP() {
-        int vp = 0;
-        vp += _money / 3;
-        vp += _vp;
-
-        int minScience = _science[0];
-        for (int i = 0; i < 3; i++) { // do this right later
-            vp += Math.pow(_science[i], 2);
-            minScience = (_science[i] < minScience) ? _science[i] : minScience;
-        }
-        vp += 7 * minScience;
-
-        for (Card.Color color : _vpPerColor.keySet()) {
-            _vp += _vpPerColor.get(color) * _colorFreq.get(color);
-        }
-
-        return vp;
     }
 }

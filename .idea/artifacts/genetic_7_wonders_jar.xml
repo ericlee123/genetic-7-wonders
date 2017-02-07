@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="genetic-7-wonders:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/genetic_7_wonders_jar</output-path>
+    <root id="archive" name="genetic-7-wonders.jar">
+      <element id="module-output" name="genetic-7-wonders" />
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
+      </element>
+    </root>
+  </artifact>
+</component>

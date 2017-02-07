@@ -1,6 +1,7 @@
 package simulate;
 
-import ai.Player;
+import ai.Greedy;
+import game.Player;
 import game.SevenWonders;
 
 import java.util.*;
@@ -14,7 +15,7 @@ public class Nature {
 
         int numGenerations = 1000;
         int playersPerGame = 6;
-        int populationSize = 100;
+        int populationSize = 1000;
         List<Player> population = freshPopulation(populationSize);
 
         List<Player> babies = new ArrayList<Player>();
@@ -23,7 +24,17 @@ public class Nature {
         for (int i = 0; i < numGenerations; i++) {
 
             if (i % 50 == 0) {
-                System.out.println("gen " + i);
+                double[] totalWeights = new double[6];
+                for (int j = 0; j < population.size(); j++) {
+                    for (int k = 0; k < population.get(j).getWeights().length; k++) {
+//                        totalWeights[k] += population.get(j).getWeights()[k];
+                    }
+                }
+                System.out.print("gen " + i + " |");
+                for (int j = 0; j < totalWeights.length; j++) {
+                    System.out.printf(" %.2f", totalWeights[j] / population.size());
+                }
+                System.out.println();
             }
 
             // play everyone against randoms
@@ -56,9 +67,11 @@ public class Nature {
     private static List<Player> freshPopulation(int populationSize) {
         List<Player> population = new ArrayList<Player>();
         for (int i = 0; i < populationSize; i++) {
-            double[] weights = new double[6];
+            double[][] weights = new double[3][6];
             for (int j = 0; j < weights.length; j++) {
-                weights[j] = (Math.random()*20) - 10;
+                for (int k = 0; k < weights[j].length; k++) {
+                    weights[j][k] = (Math.random()*20) - 10;
+                }
             }
             Player p = new Player();
             p.setWeights(weights);
@@ -68,15 +81,20 @@ public class Nature {
     }
 
     private static void playAgainstGreedy(Player smart, int playersPerGame) {
+        Greedy g = new Greedy();
         List<Player> players = new ArrayList<Player>();
         for (int i = 0; i < playersPerGame-1; i++) {
             Player p = new Player();
-            p.greedy();
+            p.setStrategy(g);
             players.add(p);
         }
         players.add(smart);
         SevenWonders game = new SevenWonders(players);
         game.run();
+    }
+
+    private static void playAgainstRandoms(Player smart, int playersPerGame) {
+
     }
 
     private static List<Player> breed(int populationSize, Map<Player, Integer> roulette, int totalFitness) {
@@ -102,14 +120,16 @@ public class Nature {
         return null;
     }
 
-    private static double[] mate(Player man, Player woman) {
-        double[] weights = new double[man.getWeights().length];
-        double[] maleWeights = man.getWeights();
-        double[] femaleWeights = woman.getWeights();
+    private static double[][] mate(Player man, Player woman) {
+        double[][] weights = new double[man.getWeights().length][man.getWeights()[0].length];
+        double[][] maleWeights = man.getWeights();
+        double[][] femaleWeights = woman.getWeights();
         double maleFraction = ((double) man.calculateVP()) / (man.calculateVP() + woman.calculateVP());
         double femaleFraction = ((double) woman.calculateVP()) / (man.calculateVP() + woman.calculateVP());
-        for (int i = 0; i < 1; i++) {
-            weights[i] = (maleWeights[i] * maleFraction) + (femaleWeights[i] * femaleFraction);
+        for (int i = 0; i < weights.length; i++) {
+            for (int j = 0; j < weights[i].length; j++) {
+                weights[i][j] = (maleWeights[i][j] * maleFraction) + (femaleWeights[i][j] * femaleFraction);
+            }
         }
         return weights;
     }
@@ -123,18 +143,6 @@ public class Nature {
                 }
             }
         }
-    }
-
-    private static void printPopulationStats(List<Player> population) {
-
-        double totalWeight = 0;
-        int totalVP = 0;
-
-        for (int i = 0; i < population.size(); i++) {
-            totalVP += population.get(i).calculateVP();
-            totalWeight += population.get(i).getWeights()[0];
-        }
-        System.out.printf("avg vp = %.3f %.3f\n", ((double) totalVP) / population.size(), totalWeight / population.size());
     }
 
     private static void compare(List<Player> babies, List<Player> evolved, int numTests) {

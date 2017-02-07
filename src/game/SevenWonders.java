@@ -1,7 +1,5 @@
 package game;
 
-import ai.Player;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
