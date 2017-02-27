@@ -7,6 +7,12 @@ import game.Player;
  */
 public class Random extends Strategy {
     public int chooseCard(Player p) {
+        for (int i = 0; i < p.getHand().size(); i++) {
+            if (p.canAfford(p.getHand().get(i))) {
+                return i;
+            }
+        }
+        p.setBurn(true);
         return (int) (Math.random() * p.getHand().size());
     }
 }

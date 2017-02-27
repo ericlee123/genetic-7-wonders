@@ -8,16 +8,20 @@ import game.Player;
 public class Greedy extends Strategy {
     public int chooseCard(Player p) {
         int chosen = -1;
-        int best = 0;
+        int maxVP = 0;
         for (int i = 0; i < p.getHand().size(); i++) {
             Player temp = new Player(p);
-            if (temp.afford(p.getHand().get(i))) {
+            if (temp.canAfford(p.getHand().get(i))) {
                 p.getHand().get(i).affect(temp);
-                if (p.calculateVP() > best) {
-                    best = p.calculateVP();
+                if (p.calculateVP() > maxVP) {
+                    maxVP = p.calculateVP();
                     chosen = i;
                 }
             }
+        }
+        if (chosen == -1) {
+            p.setBurn(true);
+            return (int) (Math.random() * p.getHand().size());
         }
         return chosen;
     }

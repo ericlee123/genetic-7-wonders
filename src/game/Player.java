@@ -9,6 +9,8 @@ import java.util.*;
  */
 public class Player {
 
+    public static final int NUM_WEIGHTS = 9;
+
     private int _money;
     private int _military;
     private int _militaryLosses;
@@ -26,8 +28,9 @@ public class Player {
     private Set<String> _selected;
     private Player _leftNeighbor;
     private Player _rightNeighbor;
+    private SevenWonders _game;
 
-    private double[][] _weights; // (per age) money military resources science vp futureVP
+    private double[][] _weights; // (per age) money military resources science(gear compass slab wildcard) blueVP totalVP
     private Strategy _strategy;
 
     public Player() {
@@ -62,9 +65,7 @@ public class Player {
         _leftNeighbor = null;
         _rightNeighbor = null;
 
-        for (int i = 0; i < _weights.length; i++) {
-            _weights[i] = new double[6];
-        }
+        _weights = new double[SevenWonders.NUM_AGES][NUM_WEIGHTS];
     }
 
     public Player(Player copy) {
@@ -83,8 +84,27 @@ public class Player {
         _board = copy.getBoard();
         _leftNeighbor = copy.getLeftNeighbor();
         _rightNeighbor = copy.getRightNeighbor();
+        _game = copy.getSevenWonders();
 
         _weights = copy.getWeights();
+    }
+
+    public double assess() {
+        int age = _game.getAge();
+        double score = 0;
+
+        score += _weights[age][0] * _money;
+        score += _weights[age][1] * _military;
+        score += _weights[age][2] * _resources.size(); // TODO: do something better like measure variety or individual resources (blegh)
+
+        for (int i = 0; i < _science.length; i++) {
+            score += _weights[age][3+i] * _science[i];
+        }
+
+        score += _weights[age][7] * _vp;
+        score += _weights[age][8] * calculateVP();
+
+        return score;
     }
 
     public int calculateVP() {
@@ -93,7 +113,7 @@ public class Player {
         vp += _vp;
 
         int minScience = _science[0];
-        for (int i = 0; i < 3; i++) { // do this right later
+        for (int i = 0; i < 3; i++) { // TODO: do this right later
             vp += Math.pow(_science[i], 2);
             minScience = (_science[i] < minScience) ? _science[i] : minScience;
         }
@@ -106,30 +126,11 @@ public class Player {
         return vp;
     }
 
-    public double assess() {
-        double score = 0;
-        score += _weights[0] * _money;
-        score += _weights[1] * _military;
-        score += _weights[2] * _resources.size();
-
-        int totalScience = 0;
-        for (int i = 0; i < _science.length; i++) {
-            totalScience += _science[i];
-        }
-        score += _weights[3] * totalScience;
-
-        score += _weights[4] * _vp;
-        score += _weights[5] * calculateVP();
-
-        return score;
-    }
-
     public void chooseCard() {
-        _chosenCard = _strategy.chooseCard(this);
-        if (_chosenCard == -1) {
-            _burn = true;
-            _chosenCard = (int) (Math.random() * _hand.size());
+        if (_strategy == null) {
+            System.out.println("it's null");
         }
+        _chosenCard = _strategy.chooseCard(this);
     }
 
     public void flip() {
@@ -146,7 +147,7 @@ public class Player {
         }
     }
 
-    public boolean afford(Card card) {
+    public boolean canAfford(Card card) {
         for (String s : card.getFreeRequirements()) {
             if (_selected.contains(s)) {
                 return true;
@@ -176,8 +177,24 @@ public class Player {
 
     // setters and getters
 
+    public void setSevenWonders(SevenWonders game) {
+        _game = game;
+    }
+
+    public SevenWonders getSevenWonders() {
+        return _game;
+    }
+
+    public void setBurn(boolean burn) {
+        _burn = burn;
+    }
+
     public void setStrategy(Strategy strategy) {
         _strategy = strategy;
+    }
+
+    public Strategy getStrategy() {
+        return _strategy;
     }
 
     public void setChosenCard(int card) {

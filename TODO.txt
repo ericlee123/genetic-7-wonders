@@ -1,6 +1,6 @@
-- add boards
+- add boards (side B)
 - add market discount cards + trading
 - calculate science with wildcard
-- counterclockwise age 2?
+- make age 2 counterclockwise
 - add forward pointers for free cards
 - compute VP correctly for age 3 yellow cards

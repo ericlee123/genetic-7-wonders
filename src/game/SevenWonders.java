@@ -9,11 +9,18 @@ import java.util.*;
  */
 public class SevenWonders {
 
+    public static final int NUM_AGES = 3;
+
     private List<Player> _players;
     private List<List<Card>> _ages;
+    private int _age = -1;
 
     public SevenWonders(List<Player> players) {
         _players = players;
+        for (int i = 0; i < _players.size(); i++) {
+            _players.get(i).setSevenWonders(this);
+        }
+
         _ages = new ArrayList<List<Card>>();
     }
 
@@ -717,6 +724,8 @@ public class SevenWonders {
     private void playGame() {
         for (int i = 0; i < 3; i++) {
 
+            _age = i;
+
             // distribute cards
             int handSize = _ages.get(i).size() / _players.size();
             for (int j = 0; j < _players.size(); j++) {
@@ -749,5 +758,9 @@ public class SevenWonders {
                 _players.get(j).compareMilitary(i);
             }
         }
+    }
+
+    public int getAge() {
+        return _age;
     }
 }
