@@ -6,16 +6,7 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="148d8331-f453-4d2e-9215-6253f8870167" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/TODO.txt" afterPath="$PROJECT_DIR$/TODO.txt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/ai/Greedy.java" afterPath="$PROJECT_DIR$/src/ai/Greedy.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/ai/Random.java" afterPath="$PROJECT_DIR$/src/ai/Random.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/ai/Strategy.java" afterPath="$PROJECT_DIR$/src/ai/Strategy.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/game/Player.java" afterPath="$PROJECT_DIR$/src/game/Player.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/game/SevenWonders.java" afterPath="$PROJECT_DIR$/src/game/SevenWonders.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/simulate/Nature.java" afterPath="$PROJECT_DIR$/src/simulate/Nature.java" />
-    </list>
+    <list default="true" id="148d8331-f453-4d2e-9215-6253f8870167" name="Default" comment="" />
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
