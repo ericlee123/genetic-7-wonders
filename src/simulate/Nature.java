@@ -14,7 +14,7 @@ public class Nature {
 
     public static void main(String[] args) {
 
-        int numGenerations = 100;
+        int numGenerations = 1000;
         int playersPerGame = 6;
         int populationSize = 10000;
         List<Player> population = freshPopulation(populationSize);
@@ -37,7 +37,7 @@ public class Nature {
                 double max = Double.MIN_VALUE;
                 double avg = 0;
                 for (int j = 0; j < population.size(); j++) {
-                    double weight = population.get(j).getWeights()[0][0];
+                    double weight = population.get(j).getWeights()[1][0];
                     avg += weight;
                     min = (weight < min) ? weight : min;
                     max = (weight > max) ? weight : max;
@@ -85,12 +85,14 @@ public class Nature {
         // compare evolved against first generation, greedy, and random
         int numTests = 100;
         System.out.println(numTests + " tests");
-        System.out.print("comparing against first generation | ");
+        System.out.print("comparing evolved against first generation | ");
         compare(evolved, babies, numTests);
-        System.out.print("comparing against greedies | ");
+        System.out.print("comparing evolved against greedies | ");
         compare(evolved, greedies, numTests);
-        System.out.print("comparing against randoms | ");
+        System.out.print("comparing evolved against randoms | ");
         compare(evolved, randalls, numTests);
+        System.out.print("comparing greedies against first generation | ");
+        compare(greedies, babies, numTests);
     }
 
     private static List<Player> freshPopulation(int populationSize) {
@@ -201,8 +203,8 @@ public class Nature {
             }
         }
         System.out.println();
-        System.out.println("test wins    -> " + (numTests - evolvedWins));
         System.out.println("evolved wins -> " + evolvedWins);
+        System.out.println("test wins    -> " + (numTests - evolvedWins));
         System.out.println("--------------------------------------------");
     }
 }
