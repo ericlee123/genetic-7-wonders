@@ -127,9 +127,6 @@ public class Player {
     }
 
     public void chooseCard() {
-        if (_strategy == null) {
-            System.out.println("it's null");
-        }
         _chosenCard = _strategy.chooseCard(this);
     }
 

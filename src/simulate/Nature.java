@@ -5,7 +5,6 @@ import game.Player;
 import game.SevenWonders;
 
 import java.util.*;
-import java.util.Random;
 
 /**
  * Created by eric on 1/24/17.
@@ -14,9 +13,9 @@ public class Nature {
 
     public static void main(String[] args) {
 
-        int numGenerations = 1000;
+        int numGenerations = 100;
         int playersPerGame = 6;
-        int populationSize = 10000;
+        int populationSize = 1000;
         List<Player> population = freshPopulation(populationSize);
 
         // save the first generation players
